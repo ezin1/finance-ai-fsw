@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@prisma/client": "^5.21.1",
     "finance-ai-fsw": "file:",
     "next": "14.2.16",
+    "prisma": "^5.21.1",
     "react": "^18",
     "react-dom": "^18"
   },
