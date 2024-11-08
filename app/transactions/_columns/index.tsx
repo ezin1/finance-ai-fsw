@@ -1,37 +1,15 @@
 "use client";
 
-import {
-  Transaction,
-  TransactionCategory,
-  TransactionPaymentMethod,
-} from "@prisma/client";
+import { Transaction } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 
 import TransactionTypeBadge from "../_components/type-badge";
 import { PencilIcon, TrashIcon } from "lucide-react";
 import { Button } from "@/app/_components/ui/button";
-
-const transactionCategoryMap = {
-  [TransactionCategory.HOUSING]: "Moradia",
-  [TransactionCategory.FOOD]: "Alimentação",
-  [TransactionCategory.SALARY]: "Salário",
-  [TransactionCategory.HEALTH]: "Saúde",
-  [TransactionCategory.EDUCATION]: "Educação",
-  [TransactionCategory.TRANSPORTATION]: "Transporte",
-  [TransactionCategory.ENTERTAINMENT]: "Entretenimento",
-  [TransactionCategory.UTILITY]: "Utilidades",
-  [TransactionCategory.OTHER]: "Outros",
-};
-
-const transactionPaymentMethodMap = {
-  [TransactionPaymentMethod.CASH]: "Dinheiro",
-  [TransactionPaymentMethod.CREDIT_CARD]: "Cartão de Crédito",
-  [TransactionPaymentMethod.DEBIT_CARD]: "Cartão de Débito",
-  [TransactionPaymentMethod.BANK_TRANSFER]: "Transferência Bancária",
-  [TransactionPaymentMethod.PIX]: "PIX",
-  [TransactionPaymentMethod.BANK_SLIP]: "Boleto Bancário",
-  [TransactionPaymentMethod.OTHER]: "Outros",
-};
+import {
+  TRANSACTION_CATEGORY_LABELS,
+  TRANSACTION_PAYMENT_METHOD_LABELS,
+} from "@/app/_constants/transactions";
 
 export const transactionColumns: ColumnDef<Transaction>[] = [
   {
@@ -49,13 +27,13 @@ export const transactionColumns: ColumnDef<Transaction>[] = [
     accessorKey: "category",
     header: "Categoria",
     cell: ({ row: { original: transaction } }) =>
-      transactionCategoryMap[transaction.category],
+      TRANSACTION_CATEGORY_LABELS[transaction.category],
   },
   {
     accessorKey: "paymentMethod",
     header: "Método",
     cell: ({ row: { original: transaction } }) =>
-      transactionPaymentMethodMap[transaction.paymentMethod],
+      TRANSACTION_PAYMENT_METHOD_LABELS[transaction.paymentMethod],
   },
   {
     accessorKey: "date",
