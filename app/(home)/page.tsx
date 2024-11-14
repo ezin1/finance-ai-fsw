@@ -8,9 +8,8 @@ import TransactionPieChart from "./_componens/transaction-pie-chart";
 import { getDashboard } from "../_data/get-dashboard";
 import ExpensesPerCategory from "./_componens/expenses-per-category";
 import LastTransactions from "./_componens/last-transactions";
-import { Button } from "../_components/ui/button";
-import { FileText } from "lucide-react";
 import { canUserAddTransaction } from "../_data/can-user-add-transaction";
+import AiReportButton from "./_componens/ai-report-button";
 
 interface HomeProps {
   searchParams: {
@@ -41,10 +40,7 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
         <div className="flex justify-between">
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <div className="flex gap-3">
-            <Button className="gap-2 border-none bg-transparent pr-4 text-sm font-bold">
-              Relatório IA
-              <FileText />
-            </Button>
+            <AiReportButton />
 
             <TimeSelect />
           </div>
