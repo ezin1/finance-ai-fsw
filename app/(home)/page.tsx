@@ -10,6 +10,7 @@ import ExpensesPerCategory from "./_componens/expenses-per-category";
 import LastTransactions from "./_componens/last-transactions";
 import { Button } from "../_components/ui/button";
 import { FileText } from "lucide-react";
+import { canUserAddTransaction } from "../_data/can-user-add-transaction";
 
 interface HomeProps {
   searchParams: {
@@ -31,6 +32,8 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
 
   const dashboardData = await getDashboard(month);
 
+  const userCanAddTransactions = await canUserAddTransaction();
+
   return (
     <>
       <Navbar />
@@ -49,7 +52,11 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
 
         <div className="grid h-full grid-cols-[2fr,1fr] gap-6 overflow-hidden">
           <div className="flex flex-col gap-6 overflow-hidden">
-            <SummaryCards month={month} {...dashboardData} />
+            <SummaryCards
+              month={month}
+              {...dashboardData}
+              userCanAddTransactions={userCanAddTransactions}
+            />
             <div className="grid h-full grid-cols-3 grid-rows-1 gap-6 overflow-hidden">
               <TransactionPieChart {...dashboardData} />
               <ExpensesPerCategory
