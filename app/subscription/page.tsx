@@ -12,7 +12,6 @@ const SubscriptionPage = async () => {
   const { userId } = await auth();
 
   if (!userId) {
-    throw new Error("User not authenticated");
     redirect("/login");
   }
 
