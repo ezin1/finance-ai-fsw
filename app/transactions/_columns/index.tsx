@@ -11,7 +11,8 @@ import {
   TRANSACTION_PAYMENT_METHOD_LABELS,
 } from "@/app/_constants/transactions";
 import EditTransactionButton from "../_components/edit-transaction-button";
-
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 export const transactionColumns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "name",
@@ -40,10 +41,8 @@ export const transactionColumns: ColumnDef<Transaction>[] = [
     accessorKey: "date",
     header: "Data",
     cell: ({ row: { original: transaction } }) =>
-      new Date(transaction.date).toLocaleDateString("pt-BR", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
+      format(new Date(transaction.date), "dd 'de' MMMM 'de' yyyy", {
+        locale: ptBR,
       }),
   },
   {
