@@ -5,4 +5,4 @@ export const generateAiReportSchema = z.object({
   month: z.string().refine((value) => isMatch(value, "MM")),
 });
 
-export type GenerateAiReportSchemaType = z.infer<typeof generateAiReportSchema>;
+export type GenerateAiReportSchema = z.infer<typeof generateAiReportSchema>;
