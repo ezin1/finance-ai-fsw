@@ -61,7 +61,6 @@ export const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
       ],
     });
     // pegar o relatório gerado pelo ChatGPT e retornar para o usuário
-    await new Promise((resolve) => setTimeout(resolve, 15000));
     return completion.choices[0].message.content;
   } catch (error) {
     console.log(error);
