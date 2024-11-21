@@ -7,6 +7,9 @@ import { Button } from "../_components/ui/button";
 import AcquirePlanButton from "./_actions/_components/acquire-plan-button";
 import { Badge } from "../_components/ui/badge";
 import { getCurrentMonthTransactions } from "../_data/get-current-month-transactions";
+import Link from "next/link";
+import { loadStripe } from "@stripe/stripe-js";
+import { createStripeCheckout } from "./_actions/create-stripe-checkout";
 
 const SubscriptionPage = async () => {
   const { userId } = await auth();
@@ -20,6 +23,24 @@ const SubscriptionPage = async () => {
   const user = await clerkClient().users.getUser(userId);
 
   const hasPremiumPlan = user.publicMetadata.subscriptionPlan === "premium";
+
+  const handleAcquirePlanClick = async () => {
+    const { sessionId } = await createStripeCheckout();
+
+    if (!process.env.NEXT_PUBLIC_STRIPE_PLUBISHABLE_KEY) {
+      throw new Error("Stripe publishable key is missing");
+    }
+
+    const stripe = await loadStripe(
+      process.env.NEXT_PUBLIC_STRIPE_PLUBISHABLE_KEY,
+    );
+
+    if (!stripe) {
+      throw new Error("Stripe not found");
+    }
+
+    await stripe.redirectToCheckout({ sessionId });
+  };
 
   return (
     <>
@@ -55,12 +76,25 @@ const SubscriptionPage = async () => {
                 <XIcon />
                 <p>Relatórios de IA</p>
               </div>
-              <Button
-                className="w-full rounded-full border border-primary bg-transparent font-bold text-primary hover:text-white"
-                variant={hasPremiumPlan ? "default" : "link"}
-              >
-                {hasPremiumPlan ? "Fazer downgrade" : "Fazer upgrade"}
-              </Button>
+              {hasPremiumPlan ? (
+                <Button
+                  className="w-full rounded-full border font-bold"
+                  variant="link"
+                >
+                  <Link
+                    href={`${process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL_URL as string}?prefilled_email=${user.emailAddresses[0].emailAddress}`}
+                  >
+                    Fazer downgrade
+                  </Link>
+                </Button>
+              ) : (
+                <Button
+                  className="w-full rounded-full border font-bold"
+                  onClick={handleAcquirePlanClick}
+                >
+                  Adquirir plano
+                </Button>
+              )}
             </CardContent>
           </Card>
 
