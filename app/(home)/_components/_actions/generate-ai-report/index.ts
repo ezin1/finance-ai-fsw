@@ -4,6 +4,7 @@ import { db } from "@/app/_lib/prisma";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import OpenAI from "openai";
 import { GenerateAiReportSchema, generateAiReportSchema } from "./schema";
+import { getDashboard } from "@/app/_data/get-dashboard";
 
 const DUMMY_REPORT =
   "### 🟩 Atenção\n" +
@@ -63,6 +64,8 @@ export const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
       },
     },
   });
+
+  const dashboardData = await getDashboard(month);
   // mandar as transações para o ChatGPT e pedir para ele gerar um relatório com insights
   const content = `Gere um relatório com insights sobre as minhas finanças, com dicas e orientações de como melhorar minha vida financeira. As transações estão divididas por ponto e vírgula. A estrutura de cada uma é {DATA}-{TIPO}-{VALOR}-{CATEGORIA}. São elas:
   ${transactions
@@ -70,14 +73,16 @@ export const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
       (transaction) =>
         `${transaction.date.toLocaleDateString("pt-BR")}-R$${transaction.amount}-${transaction.type}-${transaction.category}`,
     )
-    .join(";")}`;
+    .join(
+      ";",
+    )} e também os valores totais de depósitos, investimentos e despesas do mês são: R$${dashboardData.depositsTotal}-R$${dashboardData.investmentsTotal}-R$${dashboardData.expensesTotal}.`;
   const completion = await openAi.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
       {
         role: "system",
         content:
-          "Você é um especialista em gestão e organização de finanças pessoais. Você ajuda as pessoas a organizarem melhor as suas finanças.",
+          "Você é um especialista em gestão financeira. Sua tarefa é analisar dados financeiros detalhados e gerar relatórios com números precisos, insights acionáveis, e sugestões práticas para melhorar a saúde financeira do usuário. Leve em conta o padrão dos dados fornecidos e não invente informações além das disponíveis. Se algo estiver faltando, sugira melhorias no formato.",
       },
       {
         role: "user",
