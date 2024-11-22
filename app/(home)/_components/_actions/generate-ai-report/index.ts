@@ -52,7 +52,7 @@ export const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
         {
           role: "system",
           content:
-            "Você é um especialista em gestão e organização de finanças pessoais. Você ajuda as pessoas a organizarem melhor as suas finanças.",
+            "Você é um especialista em gestão financeira. Sua tarefa é analisar dados financeiros detalhados e gerar relatórios com números precisos, insights acionáveis, e sugestões práticas para melhorar a saúde financeira do usuário. Leve em conta o padrão dos dados fornecidos e não invente informações além das disponíveis. Se algo estiver faltando, sugira melhorias no formato.",
         },
         {
           role: "user",
