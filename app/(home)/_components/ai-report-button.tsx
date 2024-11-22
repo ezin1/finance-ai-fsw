@@ -3,20 +3,21 @@
 import { Button } from "@/app/_components/ui/button";
 import {
   Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-  DialogHeader,
-  DialogFooter,
   DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/app/_components/ui/dialog";
 import { BotIcon, Loader2Icon } from "lucide-react";
-import { generateAiReport } from "./_actions/generate-ai-report";
+
 import { useState } from "react";
 import { ScrollArea } from "@/app/_components/ui/scroll-area";
-import Marldown from "react-markdown";
+import Markdown from "react-markdown";
 import Link from "next/link";
+import { generateAiReport } from "./_actions/generate-ai-report";
 
 interface AiReportButtonProps {
   hasPremiumPlan: boolean;
@@ -24,12 +25,13 @@ interface AiReportButtonProps {
 }
 
 const AiReportButton = ({ month, hasPremiumPlan }: AiReportButtonProps) => {
-  const [report, setReport] = useState<string | null>();
+  const [report, setReport] = useState<string | null>(null);
   const [reportIsLoading, setReportIsLoading] = useState(false);
   const handleGenerateReportClick = async () => {
     try {
       setReportIsLoading(true);
       const aiReport = await generateAiReport({ month });
+      console.log({ aiReport });
       setReport(aiReport);
     } catch (error) {
       console.error(error);
@@ -37,14 +39,16 @@ const AiReportButton = ({ month, hasPremiumPlan }: AiReportButtonProps) => {
       setReportIsLoading(false);
     }
   };
-
   return (
-    <Dialog>
+    <Dialog
+      onOpenChange={(open) => {
+        if (!open) {
+          setReport(null);
+        }
+      }}
+    >
       <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          className="gap-2 border-none bg-transparent pr-4 text-sm font-bold"
-        >
+        <Button variant="ghost">
           Relatório IA
           <BotIcon />
         </Button>
@@ -60,7 +64,7 @@ const AiReportButton = ({ month, hasPremiumPlan }: AiReportButtonProps) => {
               </DialogDescription>
             </DialogHeader>
             <ScrollArea className="prose max-h-[450px] text-white prose-h3:text-white prose-h4:text-white prose-strong:text-white">
-              <Marldown>{report}</Marldown>
+              <Markdown>{report}</Markdown>
             </ScrollArea>
             <DialogFooter>
               <DialogClose asChild>
