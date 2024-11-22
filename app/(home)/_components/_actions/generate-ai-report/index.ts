@@ -5,6 +5,11 @@ import { auth, clerkClient } from "@clerk/nextjs/server";
 import OpenAI from "openai";
 import { GenerateAiReportSchema, generateAiReportSchema } from "./schema";
 import { getDashboard } from "@/app/_data/get-dashboard";
+import {
+  TRANSACTION_CATEGORY_LABELS,
+  TRANSACTION_PAYMENT_METHOD_LABELS,
+} from "@/app/_constants/transactions";
+import { TransactionCategory, TransactionPaymentMethod } from "@prisma/client";
 
 const DUMMY_REPORT =
   "### 🟩 Atenção\n" +
@@ -64,6 +69,15 @@ export const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
         lt: new Date(`2024-${month}-31`),
       },
     },
+  });
+
+  transactions.map((transaction) => {
+    transaction.category = TRANSACTION_CATEGORY_LABELS[
+      transaction.category
+    ] as TransactionCategory;
+    transaction.paymentMethod = TRANSACTION_PAYMENT_METHOD_LABELS[
+      transaction.paymentMethod
+    ] as TransactionPaymentMethod;
   });
 
   const dashboardData = await getDashboard(month);
