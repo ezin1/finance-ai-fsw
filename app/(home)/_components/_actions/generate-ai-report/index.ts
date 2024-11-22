@@ -75,7 +75,7 @@ export const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
     )
     .join(
       ";",
-    )} e também os valores totais de depósitos, investimentos e despesas do mês são: R$${dashboardData.depositsTotal}-R$${dashboardData.investmentsTotal}-R$${dashboardData.expensesTotal}.`;
+    )} e também os valores totais de depósitos, investimentos, despesas do mês e saldo final são: R$${dashboardData.depositsTotal}-R$${dashboardData.investmentsTotal}-R$${dashboardData.expensesTotal}-R$${dashboardData.balance}.`;
   const completion = await openAi.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
