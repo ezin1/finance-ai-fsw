@@ -47,7 +47,7 @@ export const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
       )
       .join(";")}`;
     const completion = await openAi.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4",
       messages: [
         {
           role: "system",
