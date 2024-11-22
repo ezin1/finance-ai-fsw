@@ -39,7 +39,7 @@ export const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
       },
     });
     // mandar as transações para o ChatGPT e pedir para ele gerar um relatório com insights
-    const content = `Gere um relatório com insights sobre as minhas finanças, com dicas e orientações de como melhorar minha vida financeira. As transações estão divididas por ponto e vírgula. A estrutura de cada uma é {DATA}-{VALOR}-{TIPO}-{CATEGORIA}. São elas:
+    const content = `Gere um relatório com números totalmente precisos e com insights sobre as minhas finanças, com dicas e orientações de como melhorar minha vida financeira. As transações estão divididas por ponto e vírgula. A estrutura de cada uma é {DATA}-{VALOR}-{TIPO}-{CATEGORIA}. São elas:
     ${transactions
       .map(
         (transaction) =>
