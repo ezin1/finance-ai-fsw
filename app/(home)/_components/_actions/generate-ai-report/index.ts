@@ -43,10 +43,66 @@ const DUMMY_REPORT =
   "Melhorar sua vida financeira é um processo contínuo que envolve planejamento, monitoramento e ajustes regulares. Com as análises e as sugestões acima, você pode começar a tomar decisões financeiras mais estratégicas para alcançar seus objetivos. Lembre-se que cada real economizado é um passo a mais em direção à segurança financeira!";
 
 export const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
-  generateAiReportSchema.parse({ month });
-  const { userId } = await auth();
-  if (!userId) {
-    throw new Error("Unauthorized");
+  try {
+    generateAiReportSchema.parse({ month });
+    const { userId } = await auth();
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+    const user = await clerkClient().users.getUser(userId);
+    const hasPremiumPlan = user.publicMetadata.subscriptionPlan === "premium";
+    if (!hasPremiumPlan) {
+      throw new Error("You need a premium plan to generate AI reports");
+    }
+    if (!process.env.OPENAI_API_KEY) {
+      console.log("entrei aqui");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return DUMMY_REPORT;
+    }
+    const openAi = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    // pegar as transações do mês recebido
+    const transactions = await db.transaction.findMany({
+      where: {
+        userId,
+        date: {
+          gte: new Date(`2025-${month}-01`),
+          lt: new Date(`2025-${month}-31`),
+        },
+      },
+    });
+
+    const dashboardData = await getDashboard(month);
+
+    // mandar as transações para o ChatGPT e pedir para ele gerar um relatório com insights
+    const content = `Gere um relatório com números totalmente precisos e com insights sobre as minhas finanças, com dicas e orientações de como melhorar minha vida financeira. As transações estão divididas por ponto e vírgula. A estrutura de cada uma é {DATA}-{VALOR}-{TIPO}-{CATEGORIA}. São elas:
+    ${transactions
+      .map(
+        (transaction) =>
+          `${transaction.date.toLocaleDateString("pt-BR")}-R$${transaction.amount}-${transaction.type}-${transaction.category}`,
+      )
+      .join(
+        ";",
+      )} e também os valores totais de depósitos, investimentos, despesas do mês e saldo são: R$${dashboardData.depositsTotal}-R$${dashboardData.investmentsTotal}-R$${dashboardData.expensesTotal}-R$${dashboardData.balance}.`;
+    const completion = await openAi.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content:
+            "Você é um especialista em gestão financeira. Sua tarefa é analisar dados financeiros detalhados e gerar relatórios com números precisos, insights acionáveis, e sugestões práticas para melhorar a saúde financeira do usuário. Leve em conta o padrão dos dados fornecidos e não invente informações além das disponíveis. Se algo estiver faltando, sugira melhorias no formato.",
+        },
+        {
+          role: "user",
+          content,
+        },
+      ],
+    });
+    // pegar o relatório gerado pelo ChatGPT e retornar para o usuário
+    return completion.choices[0].message.content;
+  } catch (error) {
+    console.log(error);
   }
   const user = await clerkClient().users.getUser(userId);
   const hasPremiumPlan = user.publicMetadata.subscriptionPlan === "premium";
@@ -65,8 +121,8 @@ export const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
     where: {
       userId,
       date: {
-        gte: new Date(`2024-${month}-01`),
-        lt: new Date(`2024-${month}-31`),
+        gte: new Date(`2025-${month}-01`),
+        lt: new Date(`2025-${month}-31`),
       },
     },
   });
