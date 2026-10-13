@@ -29,14 +29,14 @@ const TransactionsPage = async () => {
   return (
     <>
       <Navbar />
-      <div className="flex flex-col space-y-6 overflow-hidden p-6">
-        <div className="flex w-full items-center justify-between">
+      <div className="flex flex-col space-y-6 p-4 md:p-6 lg:overflow-hidden">
+        <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold">Transações</h1>
           <AddTransactionButton
             userCanAddTransactions={userCanAddTransactions}
           />
         </div>
-        <ScrollArea className="h-full">
+        <ScrollArea className="h-full w-full">
           <DataTable
             columns={transactionColumns}
             data={JSON.parse(JSON.stringify(transactions))}

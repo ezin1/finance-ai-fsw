@@ -49,10 +49,10 @@ const LastTransactions = ({ lastTransactions }: LastTransactionsProps) => {
         {lastTransactions.map((transaction) => (
           <div
             key={transaction.id}
-            className="flex items-center justify-between"
+            className="flex items-center justify-between gap-2"
           >
-            <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-white bg-opacity-[3%] p-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="shrink-0 rounded-lg bg-white bg-opacity-[3%] p-3">
                 <Image
                   src={
                     TRANSACTION_PAYMENT_METHOD_ICONS[transaction.paymentMethod]
@@ -62,8 +62,8 @@ const LastTransactions = ({ lastTransactions }: LastTransactionsProps) => {
                   alt="pix"
                 />
               </div>
-              <div>
-                <p className="text-sm font-bold">{transaction.name}</p>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-bold">{transaction.name}</p>
                 <p className="text-sm text-muted-foreground">
                   {new Date(transaction.date).toLocaleDateString("pt-BR", {
                     day: "2-digit",
@@ -73,7 +73,9 @@ const LastTransactions = ({ lastTransactions }: LastTransactionsProps) => {
                 </p>
               </div>
             </div>
-            <p className={`text-sm font-bold ${getAmountColor(transaction)}`}>
+            <p
+              className={`shrink-0 text-sm font-bold ${getAmountColor(transaction)}`}
+            >
               {getAmountPrefix(transaction)}
               {FormatCurrency(Number(transaction.amount))}
             </p>
